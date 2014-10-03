@@ -19,6 +19,7 @@ $(document).ready(function(){
 	var cw = 10;
 	var d;
 	var food;
+	var end;
 	var score;
 	
 	//Lets create the snake now
@@ -28,6 +29,7 @@ $(document).ready(function(){
 	{
 		d = "right"; //default direction
 		create_snake();
+		create_end();
 		create_food(); //Now we can see the food particle
 		//finally lets display the score
 		score = 0;
@@ -60,7 +62,16 @@ $(document).ready(function(){
 		//This will create a cell with x/y between 0-44
 		//Because there are 45(450/10) positions accross the rows and columns
 	}
-	
+	//Lets create the food now
+	function create_end()
+	{
+		end = {
+			x: Math.round(Math.random()*(w-cw)/cw), 
+			y: Math.round(Math.random()*(h-cw)/cw), 
+		};
+		//This will create a cell with x/y between 0-44
+		//Because there are 45(450/10) positions accross the rows and columns
+	}	
 	//Lets paint the snake now
 	function paint()
 	{
@@ -107,6 +118,13 @@ $(document).ready(function(){
 			//Create new food
 			create_food();
 		}
+		if(nx == end.x && ny == end.y)
+		{
+			//restart game
+			init();
+			//Lets organize the code a bit now.
+			return;
+		}
 		else
 		{
 			var tail = snake_array.pop(); //pops out the last cell
@@ -120,23 +138,30 @@ $(document).ready(function(){
 		{
 			var c = snake_array[i];
 			//Lets paint 10px wide cells
-			paint_cell(c.x, c.y);
+			paint_cell(c.x, c.y, "blue");
 		}
 		
 		//Lets paint the food
-		paint_cell(food.x, food.y);
+		paint_cell(food.x, food.y, "green");
 		//Lets paint the score
 		var score_text = "Score: " + score;
 		ctx.fillText(score_text, 5, h-5);
+		
+		paint_cell(end.x, end.y, "red");
 	}
 	
 	//Lets first create a generic function to paint cells
-	function paint_cell(x, y)
-	{
-		ctx.fillStyle = "blue";
-		ctx.fillRect(x*cw, y*cw, cw, cw);
+	function paint_cell(x, y, type)
+	{ if (type == "blue")
+		ctx.fillStyle = "blue ";
+	else if ( type == "red")
+		ctx.fillStyle = "red";
+	else if (type == "green")
+		ctx.fillStyle = "green";
+		ctx.fillRect(x*cw, y*cw, cw, cw,);
 		ctx.strokeStyle = "white";
 		ctx.strokeRect(x*cw, y*cw, cw, cw);
+
 	}
 	
 	function check_collision(x, y, array)
